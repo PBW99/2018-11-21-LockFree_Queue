@@ -151,7 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2018-11-21-LockFree_Queue.cpp" />
+    <ClCompile Include="2018-Test2.cpp" />
     <ClCompile Include="CLanServer.cpp" />
     <ClCompile Include="CLanSess.cpp" />
     <ClCompile Include="CMemoryPool.cpp" />

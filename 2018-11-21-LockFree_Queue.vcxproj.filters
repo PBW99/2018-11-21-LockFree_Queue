@@ -69,7 +69,7 @@
     <ClCompile Include="Queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="2018-11-21-LockFree_Queue.cpp">
+    <ClCompile Include="2018-Test2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

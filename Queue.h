@@ -29,7 +29,6 @@ namespace LF64
 		long                      _size;
 
 
-
 	public:
 		QueueT()
 		{
@@ -105,10 +104,10 @@ namespace LF64
 				{
 					// Follow tail.next
 					cur = next;
-					while (tail.node == _tail.node && cur && cur->next != NULL)
-					{
-						cur = cur->next;
-					}
+					// while (tail.node == _tail.node && cur && cur->next != NULL)
+					// {
+					// 	cur = cur->next;
+					// }
 					if (tail.node == _tail.node && cur && cur->next == NULL)
 						// if (tail.node == _tail.node && cur)
 					{
@@ -146,9 +145,11 @@ namespace LF64
 			NodeABA  lasttail;
 			LONG64 * plasttail = (LONG64*)&lasttail;
 
+			int retsize;
 			if (_size > 0)
 			{
-				if (InterlockedDecrement(&_size) < 0)
+				retsize = InterlockedDecrement(&_size);
+				if (retsize < 0)
 				{
 					InterlockedIncrement(&_size);
 					return -1;
@@ -175,20 +176,23 @@ namespace LF64
 				}
 				else
 				{
+					// Very Important!!! prevent next->data is polluted
+					t = next->data;
+					///////////////////////
+
 					tail.aba  = _tail.aba;
 					tail.node = _tail.node;
-					if (head.node == tail.node)
+					if (head.node == tail.node || head.aba == tail.aba)
 					{
-						
 						// Follow tail.next
 						cur = head.node->next;
-						while (head.node == tail.node && cur && cur->next !=
-							NULL)
-						{
-							tail.aba  = _tail.aba;
-							tail.node = _tail.node;
-							cur       = cur->next;
-						}
+						// while (head.node == tail.node && cur && cur->next !=
+						// 	NULL)
+						// {
+						// 	tail.aba  = _tail.aba;
+						// 	tail.node = _tail.node;
+						// 	cur       = cur->next;
+						// }
 						if (head.node == tail.node && cur && cur->next == NULL)
 						{
 							lasttail.aba  = tail.aba + 1;
@@ -201,13 +205,16 @@ namespace LF64
 						}
 						continue;
 					}
+					if (head.aba > tail.aba)
+					{
+						getchar();
+					}
 
 					if (InterlockedCompareExchange128((LONG64*)&_head,
 					                                  *(pnewhead + 1),
 					                                  *(pnewhead),
 					                                  phead))
 					{
-						t = next->data;
 						_node_pool->Free(head.node);
 						break;
 					}
